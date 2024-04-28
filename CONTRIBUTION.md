@@ -1,34 +1,34 @@
 # CONTRIBUTION
 
-# Contributions to 2CP project
+# Contributions to project
 2024
 
 First of all, thank you for willing to contribute in making this
-event a memorable one.
+stuff a memorable one.
 
 ## Quick start
 
 **All these steps are done only once**
 
-1. Go to the directory of the project:
+1. creat the directory of the project:
 
 ```bash
-cd %JC_HOME%\JSR268TK\JSR268TK-2
+mkdir Cabinet_Orthophonie
+cd Cabinet_Orthophonie
 ```
 
 1. Clone the repository:
 
 ```bash
-
-git clone https://github.com/khalilboudib/2CP-PROJECT-G15.git
+git clone https://github.com/Alilo2005/Cabinet_Orthophonie.git
 ```
 
 1. Copy the .git file of the repository to the working directory ( test that by running git status )
 
 ```bash
-mv 2CP-PROJECT-G15/* ./
-mv 2CP-PROJECT-G15/.git ./
-rm -rf 2CP-PROJECT-G15
+mv Cabinet_Orthophonie/* ./
+mv Cabinet_Orthophonie/.git ./
+rm -rf Cabinet_Orthophonie
 # test that all is okay
 git status
 ```
@@ -36,7 +36,7 @@ git status
 1. Configure remote repository:
 
 ```bash
-git remote add origin https://github.com/khalilboudib/2CP-PROJECT-G15.git
+git remote add origin https://github.com/Alilo2005/Cabinet_Orthophonie.git
 ```
 
 **The next steps are done every time you start working** 
@@ -66,10 +66,10 @@ your local changes :
 
 ### NOTE:
 
-Don’t add any binaries or other libraries files, only source files ( SampleTestApplet.java, SampleTestClient.java … )
+Don’t add any binaries or other libraries files, only source files ( code.java … )
 
 ```bash
-git add jsr268gp/sampleapplet/SampleTestApplet.java
+git add Cabinet_Orthophonie/java/code.java
 ```
 
 1. Commit your changes :
