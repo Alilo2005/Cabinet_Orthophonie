@@ -8,6 +8,20 @@ public class TestExercice extends Test {
 		this.exercices = exercices;
 	}
 
+	
+	
+	public TestExercice(String nom, String capacite, double compteRendu,
+			String conclusion) throws OverCapacityEception {
+		super(nom, capacite, compteRendu, conclusion);
+	}
+
+
+
+	public TestExercice() {
+		super();
+	}
+
+
 	@Override
 	public void afficher() {
 		// TODO Auto-generated method stub
