@@ -12,6 +12,27 @@ public abstract class Patient {
 	private boolean isFirstTime = true;
 	private int idDossier;
 	
+	
+	
+	public Patient(String nom, String prenom, int age,
+			LocalDate dateDeNaissance, String lieuDeNaissance,
+			boolean isFirstTime, int idDossier) {
+		super();
+		this.nom = nom;
+		this.prenom = prenom;
+		this.age = age;
+		this.dateDeNaissance = dateDeNaissance;
+		this.lieuDeNaissance = lieuDeNaissance;
+		this.isFirstTime = isFirstTime;
+		this.idDossier = idDossier;
+	}
+	
+	
+	public Patient() {
+		super();
+	}
+
+
 	public String getNom() {
 		return nom;
 	}
