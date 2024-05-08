@@ -9,6 +9,11 @@ public class EpreuveClinique {
 		this.observationsCliniques = observationsCliniques;
 		this.tests = tests;
 	}
+	
+	public EpreuveClinique() {
+		super();
+	}
+
 	public String[] getObservationsCliniques() {
 		return observationsCliniques;
 	}
