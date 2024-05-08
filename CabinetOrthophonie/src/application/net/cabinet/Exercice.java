@@ -13,6 +13,11 @@ public class Exercice {
 		this.nomMateriel = nomMateriel;
 		this.score = score;
 	}
+	
+	public Exercice() {
+		super();
+	}
+
 	public String getConsigne() {
 		return consigne;
 	}
