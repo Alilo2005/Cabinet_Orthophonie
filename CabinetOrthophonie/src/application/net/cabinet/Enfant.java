@@ -4,6 +4,20 @@ public class Enfant extends Patient  {
 	
 	private String classeDeEtude;
 	private String[] telParent;
+	
+	
+	public Enfant(String classeDeEtude, String[] telParent) {
+		super();
+		this.classeDeEtude = classeDeEtude;
+		this.telParent = telParent;
+	}
+	
+	
+	public Enfant() {
+		super();
+	}
+
+
 	public String getClasseDeEtude() {
 		return classeDeEtude;
 	}
