@@ -3,6 +3,7 @@ package jdbc.test;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -38,10 +39,24 @@ public class DatabaseUtil {
      * @throws SQLException if a database access error occurs
      */
     static void displayResultSet(ResultSet rs) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
+        int columnCount = metaData.getColumnCount();
+        
+        // Print column headers
+        for (int i = 1; i <= columnCount; i++) {
+            System.out.print(metaData.getColumnName(i) + "\t");
+        }
+        System.out.println();
+        
+        // Print data rows
         while (rs.next()) {
-            System.out.println(rs.getInt(1) + "  " + rs.getString(2) + "  " + rs.getString(3));
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.print(rs.getString(i) + "\t");
+            }
+            System.out.println();
         }
     }
+
 
     /**
      * Executes an update query (e.g., INSERT, UPDATE, DELETE) on the database.
