@@ -12,7 +12,7 @@ public class DatabaseUtil {
 	/**
 	 *  The next constants may change according to the user DB
 	 */
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3305/testdb";
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3305/cabinet";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "31415926";
 
