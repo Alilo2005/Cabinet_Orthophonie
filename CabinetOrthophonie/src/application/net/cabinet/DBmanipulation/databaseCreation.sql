@@ -1,15 +1,6 @@
-CREATE DATABASE Cabinet;
-USE Cabinet;
-
--- Create tables without foreign key dependencies first
-CREATE TABLE FicheSuivi (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    observations TEXT
-);
-
-CREATE TABLE Agenda (
-    id INT AUTO_INCREMENT PRIMARY KEY
-);
+DROP DATABASE IF EXISTS cabinet;
+CREATE DATABASE cabinet;
+USE cabinet;
 
 CREATE TABLE Compte (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,244 +12,381 @@ CREATE TABLE Compte (
     pswd VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE QO (
+CREATE TABLE enfant (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    question TEXT NOT NULL,
-    reponse TEXT
+    nom VARCHAR(255),
+    prenom VARCHAR(255),
+    date_naissance DATETIME,
+    lieu_naissance VARCHAR(255),
+    adresse VARCHAR(255),
+    age INT,
+    classe_etude VARCHAR(255),
+    tel_parent_1 VARCHAR(20),
+    tel_parent_2 VARCHAR(20)
 );
 
-CREATE TABLE Anamnese (
+CREATE TABLE adulte (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    prenom VARCHAR(255),
+    date_naissance DATETIME,
+    lieu_naissance VARCHAR(255),
+    adresse VARCHAR(255),
+    age INT,
+    diplome VARCHAR(255),
+    profession VARCHAR(255),
+    tel VARCHAR(20)
+);
+
+CREATE TABLE proposition (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    val TEXT
+);
+
+CREATE TABLE proposition_erronnee (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    val TEXT
+);
+
+CREATE TABLE proposition_valide (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    val TEXT
+);
+
+CREATE TABLE qo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT,
+    reponse TEXT,
+    score DECIMAL,
+    categorie VARCHAR(255)
+);
+
+CREATE TABLE qcu (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT,
+    proposition_id INT,
+    proposition_erronnee_id INT,
+    proposition_valide TEXT,
+    score DECIMAL,
+    categorie VARCHAR(255)
+);
+
+CREATE TABLE qcm (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT,
+    proposition_id INT,
+    proposition_erronnee_id INT,
+    proposition_valide_id INT,
+    score DECIMAL,
+    categorie VARCHAR(255)
+);
+
+CREATE TABLE score (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    val DECIMAL
+);
+
+CREATE TABLE exercice (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    consigne TEXT,
+    materiele VARCHAR(255)
+);
+
+CREATE TABLE test_exercice (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nom VARCHAR(255),
+    capacite VARCHAR(255),
+    compteRendu DECIMAL,
+    conclusion TEXT
+);
+
+CREATE TABLE test_questionnaire (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question TEXT,
+    reponse TEXT,
+    score DECIMAL,
+    categorie VARCHAR(255)
+);
+
+CREATE TABLE anamnese (
     id INT AUTO_INCREMENT PRIMARY KEY
 );
 
-CREATE TABLE EpreuveClinique (
+CREATE TABLE epreuve_clinique (
     id INT AUTO_INCREMENT PRIMARY KEY,
     details TEXT
 );
 
-CREATE TABLE Diagnostic (
+CREATE TABLE trouble (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    categorie ENUM('Deglutition', 'NeuroDeveloppementaux', 'Cognitif')
+);
+
+CREATE TABLE diagnostic (
     id INT AUTO_INCREMENT PRIMARY KEY,
     description TEXT
 );
 
-CREATE TABLE ProjetTherapeutique (
+CREATE TABLE projet (
     id INT AUTO_INCREMENT PRIMARY KEY,
     texte TEXT
 );
 
-CREATE TABLE Trouble (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255),
-    categorie VARCHAR(255)
+CREATE TABLE bo (
+    id INT AUTO_INCREMENT PRIMARY KEY
 );
 
-CREATE TABLE RendezVous (
+CREATE TABLE objective (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    date DATETIME NOT NULL,
+    nom VARCHAR(255),
+    terme ENUM('Court', 'Moyen', 'Long'),
+    is_atteint BOOLEAN
+);
+
+CREATE TABLE fiche_suivi (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    observations TEXT
+);
+
+CREATE TABLE dossier_enfant (
+    id INT AUTO_INCREMENT PRIMARY KEY
+);
+
+CREATE TABLE dossier_adulte (
+    id INT AUTO_INCREMENT PRIMARY KEY
+);
+
+CREATE TABLE rendez_vous_consultation_enfant (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    date_rv DATETIME,
     duree DOUBLE,
-    type VARCHAR(255),
-    resume TEXT
+    resume_rv TEXT
 );
 
-CREATE TABLE Question (
+CREATE TABLE rendez_vous_consultation_adulte (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    type VARCHAR(255),
-    question TEXT,
-    score INT
+    date_rv DATETIME,
+    duree DOUBLE,
+    resume_rv TEXT
 );
 
-CREATE TABLE Exercice (
+CREATE TABLE rendez_vous_seance_suivi_enfant (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    consigne TEXT NOT NULL,
-    nomMateriel VARCHAR(255),
-    score TEXT
+    date_rv DATETIME,
+    is_presentiel BOOLEAN,
+    resume_rv VARCHAR(255)
 );
 
-CREATE TABLE Test (
+CREATE TABLE rendez_vous_seance_suivi_adulte (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255),
-    capacite VARCHAR(255),
-    compteRendu DOUBLE,
-    conclusion TEXT
+    date_rv DATETIME,
+    is_presentiel BOOLEAN,
+    resume_rv VARCHAR(255)
 );
 
-CREATE TABLE TestExercice (
+CREATE TABLE orthophoniste (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255),
-    capacite VARCHAR(255),
-    compteRendu DOUBLE,
-    conclusion TEXT
+    compte_id INT,
+    FOREIGN KEY (compte_id) REFERENCES Compte(id)
 );
 
-CREATE TABLE Terme (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    terme VARCHAR(255) NOT NULL
-);
-
--- Create tables with foreign key dependencies next, ensuring referenced tables are created first
-CREATE TABLE DossierPatient (
-    numDossier INT PRIMARY KEY,
-    ficheSuivi_id INT,
-    FOREIGN KEY (ficheSuivi_id) REFERENCES FicheSuivi(id)
-);
-
-CREATE TABLE Anamnese_QO (
+-- Link tables for relationships
+CREATE TABLE anamnese_qo (
     anamnese_id INT,
     qo_id INT,
     PRIMARY KEY (anamnese_id, qo_id),
-    FOREIGN KEY (anamnese_id) REFERENCES Anamnese(id),
-    FOREIGN KEY (qo_id) REFERENCES QO(id)
+    FOREIGN KEY (anamnese_id) REFERENCES anamnese(id),
+    FOREIGN KEY (qo_id) REFERENCES qo(id)
 );
 
-CREATE TABLE Diagnostic_Trouble (
+CREATE TABLE epreuve_clinique_test_exercice (
+    epreuve_clinique_id INT,
+    test_exercice_id INT,
+    PRIMARY KEY (epreuve_clinique_id, test_exercice_id),
+    FOREIGN KEY (epreuve_clinique_id) REFERENCES epreuve_clinique(id),
+    FOREIGN KEY (test_exercice_id) REFERENCES test_exercice(id)
+);
+
+CREATE TABLE epreuve_clinique_test_questionnaire (
+    epreuve_clinique_id INT,
+    test_questionnaire_id INT,
+    PRIMARY KEY (epreuve_clinique_id, test_questionnaire_id),
+    FOREIGN KEY (epreuve_clinique_id) REFERENCES epreuve_clinique(id),
+    FOREIGN KEY (test_questionnaire_id) REFERENCES test_questionnaire(id)
+);
+
+CREATE TABLE diagnostic_trouble (
     diagnostic_id INT,
     trouble_id INT,
     PRIMARY KEY (diagnostic_id, trouble_id),
-    FOREIGN KEY (diagnostic_id) REFERENCES Diagnostic(id),
-    FOREIGN KEY (trouble_id) REFERENCES Trouble(id)
+    FOREIGN KEY (diagnostic_id) REFERENCES diagnostic(id),
+    FOREIGN KEY (trouble_id) REFERENCES trouble(id)
 );
 
-CREATE TABLE Test_Question (
-    test_id INT,
-    question_id INT,
-    PRIMARY KEY (test_id, question_id),
-    FOREIGN KEY (test_id) REFERENCES Test(id),
-    FOREIGN KEY (question_id) REFERENCES Question(id)
-);
-
-CREATE TABLE TestExercice_Exercice (
-    test_id INT,
-    exercice_id INT,
-    PRIMARY KEY (test_id, exercice_id),
-    FOREIGN KEY (test_id) REFERENCES TestExercice(id),
-    FOREIGN KEY (exercice_id) REFERENCES Exercice(id)
-);
-
-CREATE TABLE EpreuveClinique_Observation (
-    epreuveClinique_id INT,
-    observation VARCHAR(255), -- Use VARCHAR with a specific length
-    PRIMARY KEY (epreuveClinique_id, observation),
-    FOREIGN KEY (epreuveClinique_id) REFERENCES EpreuveClinique(id)
-);
-
-
-CREATE TABLE EpreuveClinique_Test (
-    epreuveClinique_id INT,
-    test_id INT,
-    PRIMARY KEY (epreuveClinique_id, test_id),
-    FOREIGN KEY (epreuveClinique_id) REFERENCES EpreuveClinique(id),
-    FOREIGN KEY (test_id) REFERENCES Test(id)
-);
-
-CREATE TABLE Exercice_Score (
-    exercice_id INT,
-    score INT,
-    PRIMARY KEY (exercice_id, score),
-    FOREIGN KEY (exercice_id) REFERENCES Exercice(id)
-);
-
-CREATE TABLE Objectif (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    description TEXT NOT NULL,
-    terme_id INT,
-    isAtteint BOOLEAN,
-    FOREIGN KEY (terme_id) REFERENCES Terme(id)
-);
-
-CREATE TABLE FicheSuivi_Objectif (
-    ficheSuivi_id INT,
-    objectif_id INT,
-    PRIMARY KEY (ficheSuivi_id, objectif_id),
-    FOREIGN KEY (ficheSuivi_id) REFERENCES FicheSuivi(id),
-    FOREIGN KEY (objectif_id) REFERENCES Objectif(id)
-);
-
-CREATE TABLE BO (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    anamnese_id INT,
-    epreuve_id INT NOT NULL,
-    diagnostic_id INT NOT NULL,
-    projet_id INT NOT NULL,
-    FOREIGN KEY (anamnese_id) REFERENCES Anamnese(id),
-    FOREIGN KEY (epreuve_id) REFERENCES EpreuveClinique(id),
-    FOREIGN KEY (diagnostic_id) REFERENCES Diagnostic(id),
-    FOREIGN KEY (projet_id) REFERENCES ProjetTherapeutique(id)
-);
-
-CREATE TABLE DossierPatient_RendezVous (
-    dossierPatient_id INT,
-    rendezVous_id INT,
-    PRIMARY KEY (dossierPatient_id, rendezVous_id),
-    FOREIGN KEY (dossierPatient_id) REFERENCES DossierPatient(numDossier),
-    FOREIGN KEY (rendezVous_id) REFERENCES RendezVous(id)
-);
-
-CREATE TABLE DossierPatient_BO (
-    dossierPatient_id INT,
+CREATE TABLE bo_anamnese (
     bo_id INT,
-    PRIMARY KEY (dossierPatient_id, bo_id),
-    FOREIGN KEY (dossierPatient_id) REFERENCES DossierPatient(numDossier),
-    FOREIGN KEY (bo_id) REFERENCES BO(id)
+    anamnese_id INT,
+    PRIMARY KEY (bo_id, anamnese_id),
+    FOREIGN KEY (bo_id) REFERENCES bo(id),
+    FOREIGN KEY (anamnese_id) REFERENCES anamnese(id)
 );
 
-CREATE TABLE Orthophoniste (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    compte_id INT,
-    agenda_id INT,
-    FOREIGN KEY (compte_id) REFERENCES Compte(id),
-    FOREIGN KEY (agenda_id) REFERENCES Agenda(id)
-);
-CREATE TABLE Patient (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(255) NOT NULL,
-    prenom VARCHAR(255) NOT NULL,
-    age INT NOT NULL,
-    dateDeNaissance DATE NOT NULL,
-    lieuDeNaissance VARCHAR(255) NOT NULL,
-    isFirstTime BOOLEAN NOT NULL,
-    idDossier INT NOT NULL,
-    FOREIGN KEY (idDossier) REFERENCES DossierPatient(numDossier)
-);
-CREATE TABLE Orthophoniste_DossierPatient (
-    orthophoniste_id INT,
-    dossierPatient_numDossier INT,
-    PRIMARY KEY (orthophoniste_id, dossierPatient_numDossier),
-    FOREIGN KEY (orthophoniste_id) REFERENCES Orthophoniste(id),
-    FOREIGN KEY (dossierPatient_numDossier) REFERENCES DossierPatient(numDossier)
+CREATE TABLE bo_epreuve_clinique (
+    bo_id INT,
+    epreuve_clinique_id INT,
+    PRIMARY KEY (bo_id, epreuve_clinique_id),
+    FOREIGN KEY (bo_id) REFERENCES bo(id),
+    FOREIGN KEY (epreuve_clinique_id) REFERENCES epreuve_clinique(id)
 );
 
-CREATE TABLE Orthophoniste_Patient (
-    orthophoniste_id INT,
-    patient_id INT,
-    PRIMARY KEY (orthophoniste_id, patient_id),
-    FOREIGN KEY (orthophoniste_id) REFERENCES Orthophoniste(id),
-    FOREIGN KEY (patient_id) REFERENCES Patient(id)
+CREATE TABLE bo_diagnostic (
+    bo_id INT,
+    diagnostic_id INT,
+    PRIMARY KEY (bo_id, diagnostic_id),
+    FOREIGN KEY (bo_id) REFERENCES bo(id),
+    FOREIGN KEY (diagnostic_id) REFERENCES diagnostic(id)
 );
 
-
-
-
-CREATE TABLE Adulte (
-    id INT PRIMARY KEY,
-    diplome VARCHAR(255),
-    profession VARCHAR(255),
-    tel VARCHAR(20),
-    FOREIGN KEY (id) REFERENCES Patient(id)
+CREATE TABLE bo_projet (
+    bo_id INT,
+    projet_id INT,
+    PRIMARY KEY (bo_id, projet_id),
+    FOREIGN KEY (bo_id) REFERENCES bo(id),
+    FOREIGN KEY (projet_id) REFERENCES projet(id)
 );
 
-CREATE TABLE Enfant (
-    id INT PRIMARY KEY,
-    classeDeEtude VARCHAR(255) NOT NULL,
-    FOREIGN KEY (id) REFERENCES Patient(id)
+CREATE TABLE fiche_suivi_objective (
+    fiche_suivi_id INT,
+    objective_id INT,
+    PRIMARY KEY (fiche_suivi_id, objective_id),
+    FOREIGN KEY (fiche_suivi_id) REFERENCES fiche_suivi(id),
+    FOREIGN KEY (objective_id) REFERENCES objective(id)
 );
 
-CREATE TABLE TelParent (
+CREATE TABLE dossier_enfant_enfant (
+    dossier_enfant_id INT,
     enfant_id INT,
-    telParent VARCHAR(20),
-    PRIMARY KEY (enfant_id, telParent),
-    FOREIGN KEY (enfant_id) REFERENCES Enfant(id)
+    PRIMARY KEY (dossier_enfant_id, enfant_id),
+    FOREIGN KEY (dossier_enfant_id) REFERENCES dossier_enfant(id),
+    FOREIGN KEY (enfant_id) REFERENCES enfant(id)
 );
 
--- Adding missing foreign key reference to Agenda table for Orthophoniste
-ALTER TABLE Orthophoniste
-ADD FOREIGN KEY (agenda_id) REFERENCES Agenda(id);
+CREATE TABLE dossier_enfant_bo (
+    dossier_enfant_id INT,
+    bo_id INT,
+    PRIMARY KEY (dossier_enfant_id, bo_id),
+    FOREIGN KEY (dossier_enfant_id) REFERENCES dossier_enfant(id),
+    FOREIGN KEY (bo_id) REFERENCES bo(id)
+);
+
+CREATE TABLE dossier_enfant_fiche_suivi (
+    dossier_enfant_id INT,
+    fiche_suivi_id INT,
+    PRIMARY KEY (dossier_enfant_id, fiche_suivi_id),
+    FOREIGN KEY (dossier_enfant_id) REFERENCES dossier_enfant(id),
+    FOREIGN KEY (fiche_suivi_id) REFERENCES fiche_suivi(id)
+);
+
+CREATE TABLE dossier_adulte_adulte (
+    dossier_adulte_id INT,
+    adulte_id INT,
+    PRIMARY KEY (dossier_adulte_id, adulte_id),
+    FOREIGN KEY (dossier_adulte_id) REFERENCES dossier_adulte(id),
+    FOREIGN KEY (adulte_id) REFERENCES adulte(id)
+);
+
+CREATE TABLE dossier_adulte_bo (
+    dossier_adulte_id INT,
+    bo_id INT,
+    PRIMARY KEY (dossier_adulte_id, bo_id),
+    FOREIGN KEY (dossier_adulte_id) REFERENCES dossier_adulte(id),
+    FOREIGN KEY (bo_id) REFERENCES bo(id)
+);
+
+CREATE TABLE dossier_adulte_fiche_suivi (
+    dossier_adulte_id INT,
+    fiche_suivi_id INT,
+    PRIMARY KEY (dossier_adulte_id, fiche_suivi_id),
+    FOREIGN KEY (dossier_adulte_id) REFERENCES dossier_adulte(id),
+    FOREIGN KEY (fiche_suivi_id) REFERENCES fiche_suivi(id)
+);
+
+CREATE TABLE rendez_vous_consultation_enfant_enfant (
+    rendez_vous_consultation_enfant_id INT,
+    enfant_id INT,
+    PRIMARY KEY (rendez_vous_consultation_enfant_id, enfant_id),
+    FOREIGN KEY (rendez_vous_consultation_enfant_id) REFERENCES rendez_vous_consultation_enfant(id),
+    FOREIGN KEY (enfant_id) REFERENCES enfant(id)
+);
+
+CREATE TABLE rendez_vous_consultation_adulte_adulte (
+    rendez_vous_consultation_adulte_id INT,
+    adulte_id INT,
+    PRIMARY KEY (rendez_vous_consultation_adulte_id, adulte_id),
+    FOREIGN KEY (rendez_vous_consultation_adulte_id) REFERENCES rendez_vous_consultation_adulte(id),
+    FOREIGN KEY (adulte_id) REFERENCES adulte(id)
+);
+
+CREATE TABLE rendez_vous_seance_suivi_enfant_dossier (
+    rendez_vous_seance_suivi_enfant_id INT,
+    dossier_id INT,
+    PRIMARY KEY (rendez_vous_seance_suivi_enfant_id, dossier_id),
+    FOREIGN KEY (rendez_vous_seance_suivi_enfant_id) REFERENCES rendez_vous_seance_suivi_enfant(id),
+    FOREIGN KEY (dossier_id) REFERENCES dossier_enfant(id)
+);
+
+CREATE TABLE rendez_vous_seance_suivi_adulte_dossier (
+    rendez_vous_seance_suivi_adulte_id INT,
+    dossier_id INT,
+    PRIMARY KEY (rendez_vous_seance_suivi_adulte_id, dossier_id),
+    FOREIGN KEY (rendez_vous_seance_suivi_adulte_id) REFERENCES rendez_vous_seance_suivi_adulte(id),
+    FOREIGN KEY (dossier_id) REFERENCES dossier_adulte(id)
+);
+
+CREATE TABLE orthophoniste_dossier_enfant (
+    orthophoniste_id INT,
+    dossier_enfant_id INT,
+    PRIMARY KEY (orthophoniste_id, dossier_enfant_id),
+    FOREIGN KEY (orthophoniste_id) REFERENCES orthophoniste(id),
+    FOREIGN KEY (dossier_enfant_id) REFERENCES dossier_enfant(id)
+);
+
+CREATE TABLE orthophoniste_dossier_adulte (
+    orthophoniste_id INT,
+    dossier_adulte_id INT,
+    PRIMARY KEY (orthophoniste_id, dossier_adulte_id),
+    FOREIGN KEY (orthophoniste_id) REFERENCES orthophoniste(id),
+    FOREIGN KEY (dossier_adulte_id) REFERENCES dossier_adulte(id)
+);
+
+CREATE TABLE orthophoniste_rv_seance_suivi_enfant (
+    orthophoniste_id INT,
+    rv_seance_suivi_enfant_id INT,
+    PRIMARY KEY (orthophoniste_id, rv_seance_suivi_enfant_id),
+    FOREIGN KEY (orthophoniste_id) REFERENCES orthophoniste(id),
+    FOREIGN KEY (rv_seance_suivi_enfant_id) REFERENCES rendez_vous_seance_suivi_enfant(id)
+);
+
+CREATE TABLE orthophoniste_rv_seance_suivi_adulte (
+    orthophoniste_id INT,
+    rv_seance_suivi_adulte_id INT,
+    PRIMARY KEY (orthophoniste_id, rv_seance_suivi_adulte_id),
+    FOREIGN KEY (orthophoniste_id) REFERENCES orthophoniste(id),
+    FOREIGN KEY (rv_seance_suivi_adulte_id) REFERENCES rendez_vous_seance_suivi_adulte(id)
+);
+
+CREATE TABLE orthophoniste_rv_consultation_enfant (
+    orthophoniste_id INT,
+    rv_consultation_enfant_id INT,
+    PRIMARY KEY (orthophoniste_id, rv_consultation_enfant_id),
+    FOREIGN KEY (orthophoniste_id) REFERENCES orthophoniste(id),
+    FOREIGN KEY (rv_consultation_enfant_id) REFERENCES rendez_vous_consultation_enfant(id)
+);
+
+CREATE TABLE orthophoniste_rv_consultation_adulte (
+    orthophoniste_id INT,
+    rv_consultation_adulte_id INT,
+    PRIMARY KEY (orthophoniste_id, rv_consultation_adulte_id),
+    FOREIGN KEY (orthophoniste_id) REFERENCES orthophoniste(id),
+    FOREIGN KEY (rv_consultation_adulte_id) REFERENCES rendez_vous_consultation_adulte(id)
+);
